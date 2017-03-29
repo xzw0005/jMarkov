@@ -11,6 +11,7 @@ import jmarkov.jmdp.FiniteMDP;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.io.PrintWriter;
 
 public class Problem2 extends FiniteMDP<PropertiesState, PropertiesAction> {
 
@@ -59,9 +60,9 @@ public class Problem2 extends FiniteMDP<PropertiesState, PropertiesAction> {
 		int a1 = a.getProperty(0);
 		int a2 = a.getProperty(1);
 		double r = 0;
-		for (int k = 0; k < a1; k++)
+		for (int k = 0; k <= a1; k++)
 			r = r + R1 * f1[k] * k;
-		for (int k = 1; k < a2; k++)
+		for (int k = 1; k <= a2; k++)
 			r = r + R2 * f2[k] * k;
 		r = r + R1 * F1[a1] * a1 + R2 * F2[a2] * a2 - a1 - a2;
 		return -1 * r;
@@ -106,7 +107,7 @@ public class Problem2 extends FiniteMDP<PropertiesState, PropertiesAction> {
 	
 	private double binomialProbability(int k, int n, double p) {
 		int coeff = (factorial(n).divide(factorial(n-k))).divide(factorial(k)).intValue();
-		return coeff * Math.pow(p, k) * Math.pow(1-p, n-k);		
+		return coeff * Math.pow(p, k) * Math.pow(1-p, n-k);
 	}
 		
 	private BigInteger factorial(int n) {
@@ -114,7 +115,7 @@ public class Problem2 extends FiniteMDP<PropertiesState, PropertiesAction> {
 		while (n > 0){
 			result = result.multiply(BigInteger.valueOf(n));
 			n--;
-		}		
+		}
 		return result;
 	}
 
@@ -132,13 +133,30 @@ public class Problem2 extends FiniteMDP<PropertiesState, PropertiesAction> {
 	}
 	
 	
-	public static void main(String a[]) throws Exception {
+	public static void main(String argv[]) throws Exception {
+		String PROBLEM = "QueueControl";
+		char OPT = 'd';
 		int N = 10, K = 100;
-		double R1 = 2, R2 = 1.3;
+		double R1 = 10, R2 = 30;
+		long startTime = System.nanoTime();
 		StatesSet<PropertiesState> initSet = new StatesSet<PropertiesState>(new PropertiesState(new int[]{50}));
-		Problem2 q2 = new Problem2(N, initSet, K, R1, R2, 'd');
-		q2.solve();
-		q2.printSolution();
+		Problem2 instance = new Problem2(N, initSet, K, R1, R2, OPT);
+		instance.solve();
+		long elapsedTime = System.nanoTime() - startTime;
+		System.out.println("Running time = " + elapsedTime/1e9 + " seconds.");
+		
+		String fileName = "sol_" + PROBLEM + '_' + OPT + "_jMarkov.txt";
+		PrintWriter pw = new PrintWriter(fileName);
+		pw.println("Xing Wang");
+		pw.println("Problem: " + PROBLEM + '_' + OPT);
+		pw.println("CPU Time: " + elapsedTime/1e9 + " seconds");
+		pw.println("Expected Total Reward: ");
+		pw.println("Optimal Policy: ");
+		
+		instance.getSolver().setPrintValueFunction(true);
+		instance.printSolution(pw);
+
+		pw.close();
 	}
 	
 }

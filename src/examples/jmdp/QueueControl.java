@@ -7,10 +7,10 @@ import jmarkov.basic.PropertiesState;
 import jmarkov.basic.States;
 import jmarkov.basic.StatesSet;
 import jmarkov.jmdp.FiniteMDP;
-
-import java.math.BigInteger;
-import java.math.BigDecimal;
-import java.math.MathContext;
+import java.io.PrintWriter;
+//import java.math.BigInteger;
+//import java.math.BigDecimal;
+//import java.math.MathContext;
 
 import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.apache.commons.math3.distribution.GeometricDistribution;
@@ -59,7 +59,7 @@ public class QueueControl extends FiniteMDP<PropertiesState, PropertiesAction> {
 		f1 = new double[K+1]; f2 = new double[K+1];
 		F1bar = new double[K+1]; F2bar = new double[K+1];
 
-		UniformIntegerDistribution unif = new UniformIntegerDistribution(0, 100);
+		UniformIntegerDistribution unif = new UniformIntegerDistribution(0, 101);
 		PoissonDistribution pois50 = new PoissonDistribution(50);
 		PoissonDistribution pois10 = new PoissonDistribution(10);
 		BinomialDistribution binom = new BinomialDistribution(100, 0.5);
@@ -97,9 +97,9 @@ public class QueueControl extends FiniteMDP<PropertiesState, PropertiesAction> {
 		int a1 = a.getProperty(0);
 		int a2 = a.getProperty(1);
 		double r = 0;
-		for (int k = 0; k < a1; k++)
+		for (int k = 0; k <= a1; k++)
 			r = r + R1 * f1[k] * k;
-		for (int k = 1; k < a2; k++)
+		for (int k = 0; k <= a2; k++)
 			r = r + R2 * f2[k] * k;
 		r = r + R1 * F1bar[a1] * a1 + R2 * F2bar[a2] * a2 - a1 - a2;
 		return -1 * r;
@@ -185,22 +185,29 @@ public class QueueControl extends FiniteMDP<PropertiesState, PropertiesAction> {
 //	}
 
 	public static void main(String argv[]) throws Exception {
+		String PROBLEM = "QueueControl";
+		char OPT = 'a';
 		int N = 10, K = 100;
-		double R1 = 2, R2 = 1.3;
+		double R1 = 10, R2 = 30;
+		long startTime = System.nanoTime();
 		StatesSet<PropertiesState> initSet = new StatesSet<PropertiesState>(new PropertiesState(new int[]{50}));
-		
-//		Q2 instance = new Q2(N, initSet, K, R1, R2, 'c');
-//		int n=K, k=1;
-//		double x = instance.poissonPmf(50, 100 );
-//		//double x = instance.binomialTail(3, 10, 0.2);
-//		System.out.println(x);
-//		PoissonDistribution pd = new PoissonDistribution(100);
-//		double y = pd.probability(50);
-//		System.out.println(y);
-		
-		QueueControl instance = new QueueControl(N, initSet, K, R1, R2, 'd');
+		QueueControl instance = new QueueControl(N, initSet, K, R1, R2, OPT);
 		instance.solve();
-		instance.printSolution();
+		long elapsedTime = System.nanoTime() - startTime;
+		System.out.println("Running time = " + elapsedTime/1e9 + " seconds.");
+		
+		String fileName = "sol_" + PROBLEM + '_' + OPT + "_jMarkov.txt";
+		PrintWriter pw = new PrintWriter(fileName);
+		pw.println("Xing Wang");
+		pw.println("Problem: " + PROBLEM + '_' + OPT);
+		pw.println("CPU Time: " + elapsedTime/1e9 + " seconds");
+		pw.println("Expected Total Reward: ");
+		pw.println("Optimal Policy: ");
+		
+		instance.getSolver().setPrintValueFunction(true);
+		instance.printSolution(pw);
+
+		pw.close();
 	}
 	
 }
