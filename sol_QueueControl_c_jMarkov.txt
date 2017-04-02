@@ -1,7 +1,7 @@
 Xing Wang
 Problem: QueueControl_c
-CPU Time: 51.527648519 seconds
-Expected Total Reward: 6116.76
+CPU Time: 51.308215889 seconds
+Expected Total Reward: 
 Optimal Policy: 
 Default Finite horizon solver
 ********* Best Policy *********

@@ -1,7 +1,7 @@
 Xing Wang
 Problem: Bandit_2
-CPU Time: 0.032146805 seconds
-Expected Total Reward: 27.86
+CPU Time: 0.054669669 seconds
+Expected Total Reward: 
 Optimal Policy: 
 Default Finite horizon solver
 ********* Best Policy *********

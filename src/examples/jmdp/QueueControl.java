@@ -8,10 +8,6 @@ import jmarkov.basic.States;
 import jmarkov.basic.StatesSet;
 import jmarkov.jmdp.FiniteMDP;
 import java.io.PrintWriter;
-//import java.math.BigInteger;
-//import java.math.BigDecimal;
-//import java.math.MathContext;
-
 import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.apache.commons.math3.distribution.GeometricDistribution;
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
@@ -31,35 +27,12 @@ public class QueueControl extends FiniteMDP<PropertiesState, PropertiesAction> {
 		initProbs(option);
 	}
 	
-//	private void initProbs(char option) {
-//		g = new double[K+1];
-//		f1 = new double[K+1]; f2 = new double[K+1];
-//		F1bar = new double[K+1]; F2bar = new double[K+1];
-//		for (int k = 0; k <= K; k++) {
-//			if (option == 'a' || option == 'b')
-//				g[k] = discreteUniformPmf(k, 0, K); 
-//			else if (option == 'c' || option == 'd') 
-//				g[k] = binomialPmf(k, K, 0.5);
-//			if (option == 'a' || option == 'c') {
-//				f1[k] = poissonPmf(k, 50);
-//				f2[k] = poissonPmf(k, 10);
-//				F1bar[k] = poissonTail(k, 50);
-//				F2bar[k] = poissonTail(k, 10);
-//			} else if (option == 'b' || option == 'd') {
-//				f1[k] = geometricPmf(k, 0.02);
-//				f2[k] = geometricPmf(k, 0.02);
-//				F1bar[k] = geometricTail(k, 0.02);
-//				F2bar[k] = geometricTail(k, 0.02);
-//			} 		
-//		}
-//	}
-
 	private void initProbs(char option) {
 		g = new double[K+1];
 		f1 = new double[K+1]; f2 = new double[K+1];
 		F1bar = new double[K+1]; F2bar = new double[K+1];
 
-		UniformIntegerDistribution unif = new UniformIntegerDistribution(0, 101);
+		UniformIntegerDistribution unif = new UniformIntegerDistribution(0, 100);
 		PoissonDistribution pois50 = new PoissonDistribution(50);
 		PoissonDistribution pois10 = new PoissonDistribution(10);
 		BinomialDistribution binom = new BinomialDistribution(100, 0.5);
@@ -128,65 +101,10 @@ public class QueueControl extends FiniteMDP<PropertiesState, PropertiesAction> {
 			stSet.add(new PropertiesState(new int[]{k}));
 		return stSet;
 	}
-	
-//	private double discreteUniformPmf(int k, int a, int b) {
-//		int n = b - a + 1;
-//		return 1.0/n;
-//	}
-//	
-//	private BigInteger factorial(int n) {
-////		if (n == 0)
-////			return 1;
-////		else
-////			return factorial(n-1) * n; 
-//		BigInteger result = BigInteger.ONE;
-//		while (n > 0){
-//			result = result.multiply(BigInteger.valueOf(n));
-//			n--;
-//		}		
-//		return result;
-//	}
-//	
-//	private double poissonPmf(int k, double lambda) {
-//		BigDecimal numerator = new BigDecimal(Math.exp(-lambda) * Math.pow(lambda, k));
-//		//int denominator = factorial(k).intValue();
-//		BigDecimal denominator = new BigDecimal(factorial(k));
-//		BigDecimal res = numerator.divide(denominator, MathContext.DECIMAL128);
-//		return res.doubleValue();
-//	}
-//	
-//	private double poissonTail(int k, double lambda) {
-//		double cdf = 0.0;
-//		for (int j = 0; j <= k; j++)
-//			cdf += poissonPmf(j, lambda);
-//		return 1.0 - cdf;
-//	}
-//	
-//	private double geometricPmf(int k, double p) {
-//		return Math.pow(1.0-p, k) * p;
-//	}
-//	
-//	private double geometricTail(int k, double p) {
-//		return Math.pow(1.0-p, k+1);
-//	}
-//	
-//	private double binomialPmf(int k, int n, double p) {
-//		int coeff = (factorial(n).divide(factorial(n-k))).divide(factorial(k)).intValue();
-//		return coeff * Math.pow(p, k) * Math.pow(1-p, n-k);		
-//	}
-//	
-//	private double binomialTail(int k, int n, double p) {
-//		double ret = 0.0;
-//		while (k < n) {
-//			ret += binomialPmf(k+1, n, p);
-//			k++;
-//		}
-//		return ret;
-//	}
 
 	public static void main(String argv[]) throws Exception {
 		String PROBLEM = "QueueControl";
-		char OPT = 'a';
+		char OPT = 'd';
 		int N = 10, K = 100;
 		double R1 = 10, R2 = 30;
 		long startTime = System.nanoTime();

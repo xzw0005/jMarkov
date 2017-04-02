@@ -10,7 +10,6 @@ import jmarkov.jmdp.FiniteMDP;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.io.PrintWriter;
 
 public class Problem2 extends FiniteMDP<PropertiesState, PropertiesAction> {
@@ -27,21 +26,21 @@ public class Problem2 extends FiniteMDP<PropertiesState, PropertiesAction> {
 		initProbs(option);
 	}
 	
-	private void initProbs(char subprob) {
+	private void initProbs(char opt) {
 		g = new double[K+1];
 		f1 = new double[K+1]; f2 = new double[K+1];
 		F1 = new double[K+1]; F2 = new double[K+1];
 		for (int k = 0; k <= K; k++) {
-			if (subprob == 'a' || subprob == 'b')
+			if (opt == 'a' || opt == 'b')
 				g[k] = uniformProbability(k, 0, K); 
-			else if (subprob == 'c' || subprob == 'd') 
+			else if (opt == 'c' || opt == 'd') 
 				g[k] = binomialProbability(k, K, 0.5);
-			if (subprob == 'a' || subprob == 'c') {
+			if (opt == 'a' || opt == 'c') {
 				f1[k] = poissonProbability(k, 50);
 				f2[k] = poissonProbability(k, 10);
 				F1[k] = poissonFbar(k, 50);
 				F2[k] = poissonFbar(k, 10);
-			} else if (subprob == 'b' || subprob == 'd') {
+			} else if (opt == 'b' || opt == 'd') {
 				f1[k] = geometricProbability(k, 0.02);
 				f2[k] = geometricProbability(k, 0.02);
 				F1[k] = geometricFbar(k, 0.02);
@@ -106,8 +105,9 @@ public class Problem2 extends FiniteMDP<PropertiesState, PropertiesAction> {
 	}
 	
 	private double binomialProbability(int k, int n, double p) {
-		int coeff = (factorial(n).divide(factorial(n-k))).divide(factorial(k)).intValue();
-		return coeff * Math.pow(p, k) * Math.pow(1-p, n-k);
+		BigDecimal coeff = new BigDecimal(factorial(n).divide(factorial(n-k).multiply(factorial(k))) );
+		BigDecimal pw = new BigDecimal(Math.pow(p, k) * Math.pow(1-p, n-k));
+		return pw.multiply(coeff).doubleValue();
 	}
 		
 	private BigInteger factorial(int n) {
@@ -120,9 +120,11 @@ public class Problem2 extends FiniteMDP<PropertiesState, PropertiesAction> {
 	}
 
 	private double poissonProbability(int k, double lambda) {
-		BigDecimal numerator = new BigDecimal(Math.exp(-lambda) * Math.pow(lambda, k));
+		double numerator = Math.exp(-lambda) * Math.pow(lambda, k);
 		BigDecimal denominator = new BigDecimal(factorial(k));
-		return (numerator.divide(denominator, MathContext.DECIMAL128)).doubleValue();
+		BigDecimal inverse = denominator.multiply(BigDecimal.valueOf(1.0/numerator));
+		return 1.0/(inverse.doubleValue());
+		//return (numerator.divide(denominator, MathContext.DECIMAL128)).doubleValue();
 	}	
 	
 	private double poissonFbar(int k, double lambda) {
@@ -135,7 +137,7 @@ public class Problem2 extends FiniteMDP<PropertiesState, PropertiesAction> {
 	
 	public static void main(String argv[]) throws Exception {
 		String PROBLEM = "QueueControl";
-		char OPT = 'd';
+		char OPT = 'b';
 		int N = 10, K = 100;
 		double R1 = 10, R2 = 30;
 		long startTime = System.nanoTime();

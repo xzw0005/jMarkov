@@ -1,8 +1,6 @@
-Xing Wang
-Problem: QueueControl_a
-CPU Time: 48.668718554 seconds
-Expected Total Reward: 
-Optimal Policy: 
+Liangliang Xu
+Problem:	QueueControl_3
+Cpu Time:	60.779387 s 
 Default Finite horizon solver
 ********* Best Policy *********
 
@@ -937,4 +935,4 @@ STATE      ------> ACTION
 (99)       ------> (59,16)   
 (100)      ------> (59,16)   
 Value Function:
-(50)         :   -5450.41
+(50)         :   -6116.76
